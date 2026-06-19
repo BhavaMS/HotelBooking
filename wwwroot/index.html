@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuxeStay | Premium Hotel Booking Portal</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Top Progress Bar (Visual Polish) -->
+    <div id="top-progress" class="top-progress"></div>
+
+    <!-- Navigation Header -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo" id="nav-logo">
+                <span class="logo-icon"><i data-lucide="hotel"></i></span>
+                <span class="logo-text">LuxeStay</span>
+            </a>
+
+            <nav class="nav-menu" id="nav-menu">
+                <a href="#" class="nav-link active" id="link-dashboard"><i data-lucide="compass"></i> Explore</a>
+                <a href="#" class="nav-link" id="link-history" style="display: none;"><i data-lucide="calendar"></i> My Bookings</a>
+                <!-- Admin portals will appear conditionally -->
+                <a href="#" class="nav-link" id="link-sys-admin" style="display: none;"><i data-lucide="shield-check"></i> System Admin</a>
+                <a href="#" class="nav-link" id="link-hotel-admin" style="display: none;"><i data-lucide="briefcase"></i> Hotel Admin</a>
+            </nav>
+
+            <div class="nav-actions" id="nav-actions">
+                <div class="user-profile-widget" id="user-profile-widget" style="display: none;">
+                    <div class="points-badge" title="Loyalty Points">
+                        <i data-lucide="award"></i> <span id="widget-points">0</span> pts
+                    </div>
+                    <span class="username" id="widget-username">John Doe</span>
+                    <button class="btn btn-outline btn-sm" id="btn-logout"><i data-lucide="log-out"></i> Logout</button>
+                </div>
+                <button class="btn btn-primary btn-sm" id="btn-login-trigger"><i data-lucide="user"></i> Sign In / Sign Up</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-content">
+
+        <!-- View 1: Customer Explorer (Dashboard + Results) -->
+        <section id="view-explorer" class="view-section active">
+            <!-- Hero Banner Section -->
+            <div class="hero-section">
+                <div class="hero-overlay"></div>
+                <div class="hero-content">
+                    <h1>Find Your Next Premium Stay</h1>
+                    <p>Unlock boutique hotels, exclusive rates, and instant reservation benefits globally.</p>
+                </div>
+            </div>
+
+            <!-- Promotion Offers Slideshow / Cards -->
+            <div class="offers-container">
+                <h3 class="section-title"><i data-lucide="sparkles"></i> Exclusive Deals & Offers</h3>
+                <div class="offers-grid" id="offers-grid">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+
+            <!-- Search and Filter Panel (Grid System) -->
+            <div class="search-filter-card">
+                <form id="search-form" class="search-grid">
+                    <div class="form-group">
+                        <label for="search-city"><i data-lucide="map-pin"></i> Location</label>
+                        <input type="text" id="search-city" placeholder="Where are you going?" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="search-checkin"><i data-lucide="calendar"></i> Check-in</label>
+                        <input type="date" id="search-checkin">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="search-checkout"><i data-lucide="calendar"></i> Check-out</label>
+                        <input type="date" id="search-checkout">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="search-guests"><i data-lucide="users"></i> Guests</label>
+                        <select id="search-guests">
+                            <option value="1">1 Guest</option>
+                            <option value="2" selected>2 Guests</option>
+                            <option value="3">3 Guests</option>
+                            <option value="4">4 Guests</option>
+                            <option value="5">5+ Guests</option>
+                        </select>
+                    </div>
+
+                    <div class="search-btn-wrapper">
+                        <button type="submit" class="btn btn-primary btn-block" id="btn-search">
+                            <i data-lucide="search"></i> Find Hotels
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Advanced Filters -->
+                <div class="advanced-filters">
+                    <div class="filter-group-price">
+                        <label>Price Range per Night</label>
+                        <div class="price-slider-inputs">
+                            <span>$0</span>
+                            <input type="range" id="filter-price-range" min="0" max="1000" value="500">
+                            <span id="price-slider-value">$500</span>
+                        </div>
+                    </div>
+
+                    <div class="filter-group-rating">
+                        <label>Minimum Rating</label>
+                        <div class="rating-options">
+                            <label><input type="radio" name="filter-rating" value="0" checked> Any</label>
+                            <label><input type="radio" name="filter-rating" value="3"> 3★+</label>
+                            <label><input type="radio" name="filter-rating" value="4"> 4★+</label>
+                            <label><input type="radio" name="filter-rating" value="4.5"> 4.5★+</label>
+                        </div>
+                    </div>
+
+                    <div class="filter-group-amenities">
+                        <label>Amenities</label>
+                        <div class="amenities-checkboxes">
+                            <label><input type="checkbox" name="filter-amenity" value="WiFi"> WiFi</label>
+                            <label><input type="checkbox" name="filter-amenity" value="AC"> AC</label>
+                            <label><input type="checkbox" name="filter-amenity" value="Parking"> Parking</label>
+                            <label><input type="checkbox" name="filter-amenity" value="Swimming Pool"> Pool</label>
+                            <label><input type="checkbox" name="filter-amenity" value="Spa"> Spa</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hotel Results Grid -->
+            <div class="results-container">
+                <div class="results-header">
+                    <h2 class="section-title"><i data-lucide="building"></i> Available Hotels</h2>
+                    <span class="results-count" id="results-count">Showing matching properties</span>
+                </div>
+
+                <div class="hotel-grid" id="hotel-grid">
+                    <!-- Dynamic hotel cards -->
+                    <div class="loading-spinner-wrapper">
+                        <div class="spinner"></div>
+                        <p>Loading premium stays...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- View 2: Booking History / My Bookings -->
+        <section id="view-history" class="view-section">
+            <div class="container">
+                <div class="history-header">
+                    <h2>Your Reservation History</h2>
+                    <p>View, manage, or instantly rebook your past hotel accommodations.</p>
+                </div>
+                <div class="history-grid" id="history-grid">
+                    <!-- Dynamically populated -->
+                </div>
+            </div>
+        </section>
+
+        <!-- View 3: System Admin Portal -->
+        <section id="view-sys-admin" class="view-section">
+            <div class="container admin-container">
+                <div class="admin-sidebar">
+                    <h3>System Administration</h3>
+                    <div class="admin-menu">
+                        <button class="admin-menu-btn active" id="sys-tab-hotels"><i data-lucide="building"></i> Hotels Management</button>
+                        <button class="admin-menu-btn" id="sys-tab-users"><i data-lucide="users"></i> Users Accounts</button>
+                        <button class="admin-menu-btn" id="sys-tab-coupons"><i data-lucide="ticket"></i> Coupons & Promos</button>
+                    </div>
+                </div>
+
+                <div class="admin-main-panel">
+                    <!-- Hotels Admin View -->
+                    <div class="admin-panel-content active" id="panel-sys-hotels">
+                        <div class="panel-header">
+                            <h2>Registered Hotels</h2>
+                            <button class="btn btn-primary btn-sm" id="btn-add-hotel-trigger"><i data-lucide="plus"></i> Add New Hotel</button>
+                        </div>
+                        <div class="table-container">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Hotel Name</th>
+                                        <th>Location</th>
+                                        <th>Admin Agent</th>
+                                        <th>Rooms</th>
+                                        <th>Rating</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-sys-hotels">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Users Admin View -->
+                    <div class="admin-panel-content" id="panel-sys-users">
+                        <div class="panel-header">
+                            <h2>User Accounts Database</h2>
+                            <div class="filter-controls">
+                                <label for="filter-user-role">Role:</label>
+                                <select id="filter-user-role" class="form-control-sm">
+                                    <option value="">All Roles</option>
+                                    <option value="Customer">Customers</option>
+                                    <option value="HotelAdmin">Hotel Admins</option>
+                                    <option value="SystemAdmin">System Admins</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>User Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>System Role</th>
+                                        <th>Loyalty Points</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-sys-users">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Coupons Admin View -->
+                    <div class="admin-panel-content" id="panel-sys-coupons">
+                        <div class="panel-header">
+                            <h2>Active Discounts & Coupon Codes</h2>
+                            <button class="btn btn-primary btn-sm" id="btn-add-coupon-trigger"><i data-lucide="plus"></i> Add Coupon</button>
+                        </div>
+                        <div class="table-container">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Coupon Code</th>
+                                        <th>Discount Type</th>
+                                        <th>Discount Value</th>
+                                        <th>Expiry Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-sys-coupons">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- View 4: Hotel Admin Portal -->
+        <section id="view-hotel-admin" class="view-section">
+            <div class="container admin-container">
+                <div class="admin-sidebar">
+                    <h3 id="hotel-admin-title">Hotel Operations</h3>
+                    <p class="hotel-admin-subtitle" id="hotel-admin-subtitle">Hotel Admin Portal</p>
+                    <div class="admin-menu">
+                        <button class="admin-menu-btn active" id="hotel-tab-rooms"><i data-lucide="key"></i> Rooms Inventory</button>
+                        <button class="admin-menu-btn" id="hotel-tab-amenities"><i data-lucide="sliders"></i> Facilities & Amenities</button>
+                        <button class="admin-menu-btn" id="hotel-tab-bookings"><i data-lucide="book-open"></i> Customer Bookings</button>
+                    </div>
+                </div>
+
+                <div class="admin-main-panel">
+                    <!-- Rooms Admin View -->
+                    <div class="admin-panel-content active" id="panel-hotel-rooms">
+                        <div class="panel-header">
+                            <h2>Rooms Inventory Control</h2>
+                            <div class="panel-actions">
+                                <button class="btn btn-outline btn-sm" id="btn-add-roomtype-trigger"><i data-lucide="plus"></i> Add Category</button>
+                                <button class="btn btn-primary btn-sm" id="btn-add-room-trigger"><i data-lucide="plus"></i> Add Room</button>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Room No</th>
+                                        <th>Category Type</th>
+                                        <th>Max Capacity</th>
+                                        <th>Price per Night</th>
+                                        <th>Housekeeping Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-hotel-rooms">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Amenities Admin View -->
+                    <div class="admin-panel-content" id="panel-hotel-amenities">
+                        <div class="panel-header">
+                            <h2>Hotel Facilities & Amenities</h2>
+                            <button class="btn btn-primary btn-sm" id="btn-add-amenity-trigger"><i data-lucide="plus"></i> Add Amenity</button>
+                        </div>
+                        <div class="amenities-toggle-grid" id="grid-hotel-amenities">
+                            <!-- Dynamic amenities with switches -->
+                        </div>
+                    </div>
+
+                    <!-- Bookings Admin View -->
+                    <div class="admin-panel-content" id="panel-hotel-bookings">
+                        <div class="panel-header">
+                            <h2>Customer Bookings List</h2>
+                        </div>
+                        <div class="table-container">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Res. ID</th>
+                                        <th>Guest Details</th>
+                                        <th>Room Info</th>
+                                        <th>Check In/Out</th>
+                                        <th>Price Paid</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-hotel-bookings">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="main-footer">
+        <p>&copy; 2026 LuxeStay Inc. Created for HCL Hackathon. All rights reserved.</p>
+    </footer>
+
+    <!-- MODAL POPUPS -->
+    <!-- Modal 1: Login & Registration Modal -->
+    <div class="modal-backdrop" id="modal-login">
+        <div class="modal-card modal-auth">
+            <button class="modal-close" onclick="closeModal('modal-login')">&times;</button>
+
+            <div class="auth-tabs">
+                <button class="auth-tab-btn active" id="tab-login-btn">Login</button>
+                <button class="auth-tab-btn" id="tab-register-btn">Register</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="form-login" class="auth-form-content active">
+                <div class="form-group-custom">
+                    <label>Email Address</label>
+                    <input type="email" id="login-email" required placeholder="Enter email (e.g. customer@hotel.com)">
+                </div>
+                <div class="form-group-custom">
+                    <label>Password</label>
+                    <input type="password" id="login-password" required placeholder="Enter password (e.g. cust123)">
+                </div>
+
+                <div class="admin-login-checkbox">
+                    <label><input type="checkbox" id="login-is-admin"> Use Management Access (Admin Login)</label>
+                </div>
+
+                <div class="auth-error" id="login-error-msg"></div>
+
+                <button type="submit" class="btn btn-primary btn-block btn-auth">Authenticate Account</button>
+
+                <div class="auth-hint">
+                    <p><strong>Demo Logins:</strong></p>
+                    <ul>
+                        <li>Customer: <code>customer@hotel.com</code> / <code>cust123</code></li>
+                        <li>Sys Admin: <code>admin@hotel.com</code> / <code>admin123</code></li>
+                        <li>Hotel Admin: <code>hadmin1@hotel.com</code> / <code>admin123</code></li>
+                    </ul>
+                </div>
+            </form>
+
+            <!-- Register Form -->
+            <form id="form-register" class="auth-form-content">
+                <div class="form-group-custom">
+                    <label>Full Name</label>
+                    <input type="text" id="register-name" required placeholder="John Doe">
+                </div>
+                <div class="form-group-custom">
+                    <label>Email Address</label>
+                    <input type="email" id="register-email" required placeholder="john@example.com">
+                </div>
+                <div class="form-group-custom">
+                    <label>Phone Number</label>
+                    <input type="tel" id="register-phone" required placeholder="123-456-7890">
+                </div>
+                <div class="form-group-custom">
+                    <label>Password</label>
+                    <input type="password" id="register-password" required placeholder="Create secure password">
+                </div>
+
+                <div class="auth-error" id="register-error-msg"></div>
+                <button type="submit" class="btn btn-primary btn-block btn-auth">Create Customer Account</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 2: Hotel Detail View Modal -->
+    <div class="modal-backdrop" id="modal-hotel-details">
+        <div class="modal-card modal-lg">
+            <button class="modal-close" onclick="closeModal('modal-hotel-details')">&times;</button>
+
+            <div id="hotel-details-content">
+                <!-- Dynamic Content: banner, title, rating, description, amenities, room categories list -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3: Booking/Checkout Form Modal -->
+    <div class="modal-backdrop" id="modal-checkout">
+        <div class="modal-card modal-md">
+            <button class="modal-close" onclick="closeModal('modal-checkout')">&times;</button>
+
+            <h2>Secure Room Booking</h2>
+            <p class="subtitle" id="checkout-room-info">Deluxe Room | Grand Plaza Hotel</p>
+
+            <form id="form-checkout">
+                <input type="hidden" id="checkout-roomtype-id">
+
+                <div class="checkout-dates-bar">
+                    <div>
+                        <strong>Check In:</strong> <span id="checkout-dates-in">--</span>
+                    </div>
+                    <div>
+                        <strong>Check Out:</strong> <span id="checkout-dates-out">--</span>
+                    </div>
+                    <div>
+                        <strong>Nights:</strong> <span id="checkout-nights">1</span>
+                    </div>
+                </div>
+
+                <h3>Guest Details</h3>
+                <div class="grid-2">
+                    <div class="form-group-custom">
+                        <label>Contact Name</label>
+                        <input type="text" id="checkout-guest-name" required placeholder="Guest full name">
+                    </div>
+                    <div class="form-group-custom">
+                        <label>Phone Number</label>
+                        <input type="tel" id="checkout-guest-phone" required placeholder="Contact phone number">
+                    </div>
+                </div>
+                <div class="form-group-custom">
+                    <label>Email Address</label>
+                    <input type="email" id="checkout-guest-email" required placeholder="receipts@example.com">
+                </div>
+
+                <h3>Payment Options</h3>
+                <div class="payment-path-selector">
+                    <label class="payment-card active" id="path-offline">
+                        <input type="radio" name="payment-method" value="Offline Payment" checked>
+                        <span class="path-title"><i data-lucide="clock"></i> Reserve Only</span>
+                        <span class="path-desc">No payment now. Pay offline at check-in. No loyalty rewards or discount code support.</span>
+                    </label>
+
+                    <label class="payment-card" id="path-online">
+                        <input type="radio" name="payment-method" value="Online Payment">
+                        <span class="path-title"><i data-lucide="credit-card"></i> Pay Online Now</span>
+                        <span class="path-desc">Apply coupon codes, spend loyalty rewards, and earn 10% cash back in loyalty points instantly!</span>
+                    </label>
+                </div>
+
+                <!-- Online Payment Section (Hidden by default) -->
+                <div id="online-payment-addons" style="display: none;">
+                    <div class="promo-inputs">
+                        <div class="form-group-custom">
+                            <label>Apply Promo Coupon</label>
+                            <div class="flex-row">
+                                <input type="text" id="checkout-coupon" placeholder="WELCOME10">
+                                <button type="button" class="btn btn-outline" id="btn-apply-coupon">Apply</button>
+                            </div>
+                            <span class="coupon-feedback" id="coupon-feedback"></span>
+                        </div>
+                    </div>
+
+                    <div class="loyalty-spend" id="loyalty-spend-container" style="display: none;">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="checkout-use-points">
+                            Use <span id="checkout-avail-points">0</span> loyalty points to get $<span id="checkout-points-discount">0</span> discount!
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Pricing Summary -->
+                <div class="pricing-summary-card">
+                    <div class="price-row">
+                        <span>Room rate (<span id="summary-nights">1</span> nights)</span>
+                        <span id="summary-base-rate">$0.00</span>
+                    </div>
+                    <div class="price-row discount-row" id="summary-discount-row" style="display: none;">
+                        <span>Applied discount</span>
+                        <span id="summary-discount">-$0.00</span>
+                    </div>
+                    <hr>
+                    <div class="price-row total-row">
+                        <span>Grand Total</span>
+                        <span id="summary-total">$0.00</span>
+                    </div>
+                </div>
+
+                <div class="auth-error" id="checkout-error-msg"></div>
+
+                <button type="submit" class="btn btn-primary btn-block btn-lg" id="btn-submit-booking">
+                    <i data-lucide="check-circle"></i> Confirm Reservation
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 4: Booking Status / Simulated Email Confirmation -->
+    <div class="modal-backdrop" id="modal-status">
+        <div class="modal-card modal-md">
+            <button class="modal-close" onclick="closeModal('modal-status')">&times;</button>
+
+            <div class="status-content-wrapper">
+                <div class="status-icon success"><i data-lucide="check-circle-2"></i></div>
+                <h2>Reservation Confirmed!</h2>
+                <p>Your booking has been successfully recorded on the ledger. An email confirmation containing your reservation number has been dispatched.</p>
+
+                <div class="email-terminal">
+                    <div class="terminal-header">
+                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                        <span class="terminal-title">Simulated Mailer Daemon Output</span>
+                    </div>
+                    <pre class="terminal-content" id="email-preview-content">
+                        <!-- Loaded dynamically -->
+                    </pre>
+                </div>
+
+                <button class="btn btn-primary btn-block" onclick="closeModal('modal-status')">Close & Return to Dashboard</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 5: Add Hotel Modal (System Admin) -->
+    <div class="modal-backdrop" id="modal-sys-add-hotel">
+        <div class="modal-card modal-md">
+            <button class="modal-close" onclick="closeModal('modal-sys-add-hotel')">&times;</button>
+            <h2>Add New Property</h2>
+            <form id="form-sys-add-hotel">
+                <div class="form-group-custom">
+                    <label>Hotel Name</label>
+                    <input type="text" id="sys-hotel-name" required placeholder="Grand Marriott">
+                </div>
+                <div class="form-group-custom">
+                    <label>Description</label>
+                    <textarea id="sys-hotel-desc" placeholder="Enter basic description about the hotel..."></textarea>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group-custom">
+                        <label>Address</label>
+                        <input type="text" id="sys-hotel-addr" required placeholder="123 Broad St">
+                    </div>
+                    <div class="form-group-custom">
+                        <label>City</label>
+                        <input type="text" id="sys-hotel-city" required placeholder="New York">
+                    </div>
+                </div>
+                <div class="grid-3">
+                    <div class="form-group-custom">
+                        <label>State</label>
+                        <input type="text" id="sys-hotel-state" required placeholder="NY">
+                    </div>
+                    <div class="form-group-custom">
+                        <label>Pincode</label>
+                        <input type="text" id="sys-hotel-pincode" required placeholder="10001">
+                    </div>
+                    <div class="form-group-custom">
+                        <label>Rating (1-5)</label>
+                        <input type="number" id="sys-hotel-rating" min="1" max="5" step="0.1" value="5.0" required>
+                    </div>
+                </div>
+                <div class="form-group-custom">
+                    <label>Image URL</label>
+                    <input type="url" id="sys-hotel-img" placeholder="https://images.unsplash.com/...">
+                </div>
+
+                <h3>Assign Hotel Administrator</h3>
+                <div class="form-group-custom">
+                    <label>Admin Name</label>
+                    <input type="text" id="sys-hotel-admin-name" required placeholder="Admin manager name">
+                </div>
+                <div class="form-group-custom">
+                    <label>Admin Email</label>
+                    <input type="email" id="sys-hotel-admin-email" required placeholder="hadmin@hotel.com">
+                </div>
+                <div class="grid-2">
+                    <div class="form-group-custom">
+                        <label>Admin Phone</label>
+                        <input type="tel" id="sys-hotel-admin-phone" required placeholder="555-555-5555">
+                    </div>
+                    <div class="form-group-custom">
+                        <label>Temp Password</label>
+                        <input type="password" id="sys-hotel-admin-pass" value="admin123" required>
+                    </div>
+                </div>
+
+                <div class="auth-error" id="sys-hotel-error-msg"></div>
+                <button type="submit" class="btn btn-primary btn-block">Register Property & Admin Account</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 6: Add Coupon Modal (System Admin) -->
+    <div class="modal-backdrop" id="modal-sys-add-coupon">
+        <div class="modal-card modal-sm">
+            <button class="modal-close" onclick="closeModal('modal-sys-add-coupon')">&times;</button>
+            <h2>Create Discount Promo</h2>
+            <form id="form-sys-add-coupon">
+                <div class="form-group-custom">
+                    <label>Coupon Code</label>
+                    <input type="text" id="sys-coupon-code" required placeholder="SUMMER50">
+                </div>
+                <div class="form-group-custom">
+                    <label>Discount Type</label>
+                    <select id="sys-coupon-type">
+                        <option value="Percentage">Percentage (%)</option>
+                        <option value="FixedAmount">Fixed Amount ($)</option>
+                    </select>
+                </div>
+                <div class="form-group-custom">
+                    <label>Discount Value</label>
+                    <input type="number" id="sys-coupon-value" required min="1" step="0.01" placeholder="10.00">
+                </div>
+                <div class="form-group-custom">
+                    <label>Expiry Date</label>
+                    <input type="date" id="sys-coupon-expiry" required>
+                </div>
+
+                <div class="auth-error" id="sys-coupon-error-msg"></div>
+                <button type="submit" class="btn btn-primary btn-block">Generate Coupon</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 7: Add Room Category Modal (Hotel Admin) -->
+    <div class="modal-backdrop" id="modal-hotel-add-roomtype">
+        <div class="modal-card modal-md">
+            <button class="modal-close" onclick="closeModal('modal-hotel-add-roomtype')">&times;</button>
+            <h2>Add Room Category</h2>
+            <form id="form-hotel-add-roomtype">
+                <div class="form-group-custom">
+                    <label>Category Name</label>
+                    <input type="text" id="hotel-rt-name" required placeholder="Luxury Penthouse Suite">
+                </div>
+                <div class="grid-2">
+                    <div class="form-group-custom">
+                        <label>Price per Night ($)</label>
+                        <input type="number" id="hotel-rt-price" required min="1" step="0.01" placeholder="250.00">
+                    </div>
+                    <div class="form-group-custom">
+                        <label>Capacity (Persons)</label>
+                        <input type="number" id="hotel-rt-capacity" required min="1" value="2">
+                    </div>
+                </div>
+                <div class="form-group-custom">
+                    <label>Description (Bed layouts, location, views...)</label>
+                    <textarea id="hotel-rt-desc" required placeholder="King size posturepedic bed, floor-to-ceiling windows, waterfront views..."></textarea>
+                </div>
+                <div class="form-group-custom">
+                    <label>Room Amenities (Comma-separated)</label>
+                    <input type="text" id="hotel-rt-amenities" placeholder="AC, Smart TV, WiFi, Mini Bar, Balcony, Espresso Machine">
+                </div>
+
+                <div class="auth-error" id="hotel-rt-error-msg"></div>
+                <button type="submit" class="btn btn-primary btn-block">Save Room Category</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 8: Add Room Modal (Hotel Admin) -->
+    <div class="modal-backdrop" id="modal-hotel-add-room">
+        <div class="modal-card modal-sm">
+            <button class="modal-close" onclick="closeModal('modal-hotel-add-room')">&times;</button>
+            <h2>Add Room Unit</h2>
+            <form id="form-hotel-add-room">
+                <div class="form-group-custom">
+                    <label>Room Number / Label</label>
+                    <input type="text" id="hotel-room-no" required placeholder="Suite 304">
+                </div>
+                <div class="form-group-custom">
+                    <label>Room Category</label>
+                    <select id="hotel-room-type-select" required>
+                        <!-- Loaded dynamically based on hotel roomtypes -->
+                    </select>
+                </div>
+                <div class="form-group-custom">
+                    <label>Initial Status</label>
+                    <select id="hotel-room-status">
+                        <option value="Available">Available</option>
+                        <option value="Maintenance">Maintenance</option>
+                    </select>
+                </div>
+
+                <div class="auth-error" id="hotel-room-error-msg"></div>
+                <button type="submit" class="btn btn-primary btn-block">Register Room Unit</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 9: Add Amenity Modal (Hotel Admin) -->
+    <div class="modal-backdrop" id="modal-hotel-add-amenity">
+        <div class="modal-card modal-sm">
+            <button class="modal-close" onclick="closeModal('modal-hotel-add-amenity')">&times;</button>
+            <h2>Add Hotel Amenity</h2>
+            <form id="form-hotel-add-amenity">
+                <div class="form-group-custom">
+                    <label>Amenity Name</label>
+                    <input type="text" id="hotel-amenity-name" required placeholder="Valet Parking">
+                </div>
+                <div class="checkbox-label">
+                    <label><input type="checkbox" id="hotel-amenity-status" checked> Is Available Now</label>
+                </div>
+
+                <div class="auth-error" id="hotel-amenity-error-msg"></div>
+                <button type="submit" class="btn btn-primary btn-block">Add Amenity</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 10: Rebook Dates Selector Modal -->
+    <div class="modal-backdrop" id="modal-rebook">
+        <div class="modal-card modal-sm">
+            <button class="modal-close" onclick="closeModal('modal-rebook')">&times;</button>
+            <h2>Instantly Rebook Stay</h2>
+            <p class="subtitle" id="rebook-hotel-name">Grand Plaza Hotel</p>
+            <form id="form-rebook">
+                <input type="hidden" id="rebook-booking-id">
+
+                <div class="form-group-custom">
+                    <label>New Check-in Date</label>
+                    <input type="date" id="rebook-checkin" required>
+                </div>
+
+                <div class="form-group-custom">
+                    <label>New Check-out Date</label>
+                    <input type="date" id="rebook-checkout" required>
+                </div>
+
+                <h3>Payment Option</h3>
+                <div class="payment-path-selector sm">
+                    <label class="payment-card active" id="rebook-path-offline">
+                        <input type="radio" name="rebook-payment-method" value="Offline Payment" checked>
+                        <span>Reserve (Offline)</span>
+                    </label>
+                    <label class="payment-card" id="rebook-path-online">
+                        <input type="radio" name="rebook-payment-method" value="Online Payment">
+                        <span>Pay Online Now</span>
+                    </label>
+                </div>
+
+                <div class="auth-error" id="rebook-error-msg"></div>
+                <button type="submit" class="btn btn-primary btn-block">Confirm Rebook</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Core App JS -->
+    <script src="app.js"></script>
+</body>
+</html>
