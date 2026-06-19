@@ -841,6 +841,7 @@ async function handleAddHotel(e) {
     const pincode = document.getElementById('sys-hotel-pincode').value;
     const ratings = parseFloat(document.getElementById('sys-hotel-rating').value);
     const imageUrl = document.getElementById('sys-hotel-img').value;
+    console.log("Image URL entered:", imageUrl);
 
     const adminName = document.getElementById('sys-hotel-admin-name').value;
     const adminEmail = document.getElementById('sys-hotel-admin-email').value;
@@ -851,7 +852,7 @@ async function handleAddHotel(e) {
         hotelName, description, address, city, state: stateVal, pincode, ratings, imageUrl,
         adminName, adminEmail, adminPhone, adminPassword
     };
-
+    console.log("Payload:", payload);
     try {
         await apiCall('/admin/hotels', 'POST', payload);
         closeModal('modal-sys-add-hotel');
